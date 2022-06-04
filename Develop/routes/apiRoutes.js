@@ -1,7 +1,43 @@
-// The following API routes should be created:
+const router = require('express').Router();
+const fs = require('fs');
+const path = require("path");
+let notes = require('../db/db.json');
+const { v4: uuidv4 } = require('uuid');
 
-// GET /api/notes should read the db.json file and return all saved notes as JSON.
+router.get('/notes', (req, res) => {
+  res.json(notes);
+});
 
-// POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
 
-// the application should have a db.json file on the back end that will be used to store and retrieve notes using the fs module.
+router.get('/notes/:id', (req, res) => {
+  const result = findById(req.params.id, notes);
+  if (result) {
+    res.json(result);
+  } else {
+    res.send(404);
+  }
+});
+
+router.delete('/notes/:id', (req, res) => {
+notes = notes.filter(function(id){
+  return id != req.params.id;
+})
+  }
+);
+
+router.post('/notes', (req, res) => {
+let newNote = req.body;
+newNote.id = uuidv4();
+notes.push(newNote);
+fs.writeFile(path.resolve(_dirname, "../db/db.json"), JSON.stringify(notes), function(err){
+  if(err) {
+    console.error(err);
+    res.status(500).send("An error occurred, please try again");
+  }
+  else {
+    res.json(newNote)
+  }
+})
+});
+
+module.exports = router;
