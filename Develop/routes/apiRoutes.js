@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require("path");
 let notes = require('../db/db.json');
 const { v4: uuidv4 } = require('uuid');
+const { request } = require('http');
 
 router.get('/notes', (req, res) => {
   res.json(notes);
@@ -18,12 +19,15 @@ router.get('/notes/:id', (req, res) => {
   }
 });
 
-router.delete('/notes/:id', (req, res) => {
-notes = notes.filter(function(id){
-  return id != req.params.id;
-})
-  }
-);
+
+// DELETE REQUEST THAT DOES NOT WORK...MAY COME BACK, FIX, AND RE-SUBMIT. IGNORE FOR NOW.
+// router.delete('/notes/:id', (req, res) => {
+// notes.removenote(req.params.id)
+// request.db.get('notes').remove({'id': req.params.id}, function(error, document) {
+//   if (error) res.send(error);
+//   return res.send("deleted note");
+// })
+// });
 
 router.post('/notes', (req, res) => {
 let newNote = req.body;
